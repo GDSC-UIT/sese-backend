@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const userRoute = require('./routes/user');
 const globalErrorHandler = require('./middlewares/globalErrorHandler');
 const AppError = require('./utils/AppError');
+const res = require('express/lib/response');
 
 //Config
 const app = express();
@@ -23,6 +24,9 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
+app.get('/', (req, res) => {
+  res.send('HELLO STUREE');
+});
 app.use('/api/users', userRoute);
 
 app.all('*', (req, res, next) => {
