@@ -4,7 +4,6 @@ const globalErrorHandler = (err, req, res, next) => {
   //Log to console for dev
   console.log(err.message);
   let error = Object.create(err);
-  //Copy error object
 
   //Mongoose bad ObjectId
   if (err.name === 'CastError') {

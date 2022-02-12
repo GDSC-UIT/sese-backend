@@ -1,16 +1,14 @@
-
-
-const app = require('./app'); 
+const app = require('./app');
+const connectDB = require('./database');
 const port = process.env.PORT || 5000;
 
-// connectDB();
+connectDB();
 
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 
-
-process.on('uncaughtException', err => {
+process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
   console.log(err.name, err.message, err);
   process.exit(1);
