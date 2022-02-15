@@ -38,6 +38,7 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
     email: decodedToken.email,
     name: decodedToken.name,
     avatar: decodedToken.picture,
+    signInProvider: decodedToken.firebase.sign_in_provider,
   });
   createSendToken(
     {
@@ -47,6 +48,16 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
     201,
     res,
   );
+});
+
+//@desc         FOR TESTING: Login = uid
+//@route        POST /api/auth/login
+//@access       PUBLIC
+exports.login = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({
+    uid: req.body.uid,
+  });
+  createSendToken(user, 200, res);
 });
 
 const createSendToken = (user, statusCode, res) => {

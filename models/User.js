@@ -23,6 +23,7 @@ const UserSchema = new Schema(
     },
     avatar: {
       type: String,
+      required: [true, 'Please upload your avatar'],
     },
   },
   {

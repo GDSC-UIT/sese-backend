@@ -4,7 +4,8 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { protect } = require('../middlewares/auth');
 
-//FIXME: Now, Only test for protected route
+
 router.get('/', protect, userController.getUsers);
+router.put('/me', protect, userController.updateUser);
 
 module.exports = router;
