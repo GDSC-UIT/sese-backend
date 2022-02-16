@@ -5,7 +5,9 @@ const userController = require('../controllers/userController');
 const { protect } = require('../middlewares/auth');
 
 
-router.get('/', protect, userController.getUsers);
+//Test
+router.get('/', userController.getUsers);
+
 router.put('/me', protect, userController.updateUser);
 
 module.exports = router;
