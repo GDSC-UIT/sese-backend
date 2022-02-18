@@ -1,6 +1,10 @@
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/User');
-const { excludeFields, filterObject, objIsEmpty } = require('../utils');
+const {
+  filterObject,
+  objIsEmpty,
+  convertNestedObjectQuery,
+} = require('../utils');
 const AppError = require('../utils/AppError');
 
 //@desc         update user information
@@ -22,27 +26,30 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 //@route        PUT /api/users/me/verification
 //@access       PRIVATE
 exports.updateVerificationRequest = catchAsync(async (req, res, next) => {
-  const filteredObj = filterObject(req.body, 'evidence');
+  const { evidence } = filterObject(req.body, 'evidence');
 
-  if (!filteredObj.evidence || objIsEmpty(filteredObj.evidence)) {
-    return next(new AppError('Vui lòng nhập đầy đủ thông tin', 400));
+  if (!evidence || objIsEmpty(evidence)) {
+    return next(new AppError('Vui lòng nhập thông tin', 400));
   }
   const user = await User.findById(req.user._id);
-  console.log('before:', user);
-  console.log('Check:', user.evidence);
-  console.log(objIsEmpty(user.evidence));
-  if (!user.evidence || objIsEmpty(user.evidence)) {
-    filteredObj.evidence.submittedAt = Date.now();
-    filteredObj.evidence.status = 'pending';
-    console.log('Voo day');
+
+  //First send verification request
+  if (!user.evidence) {
+    user.evidence = evidence;
+    await user.save();
+    return res.status(200).json({
+      user: user,
+    });
   }
 
-  filteredObj.evidence.updatedAt = Date.now();
-  user.evidence = filteredObj.evidence;
-
-  console.log(user);
-  await user.save();
+  //Update
+  evidence.updatedAt = Date.now();
+  const updateQuery = convertNestedObjectQuery('evidence', evidence);
+  const updatedUser = await User.findByIdAndUpdate(req.user._id, updateQuery, {
+    new: true,
+    runValidators: true,
+  });
   res.status(200).json({
-    user,
+    user: updatedUser,
   });
 });

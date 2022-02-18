@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { validateEmail } = require('../utils/validate');
 const AppError = require('../utils/AppError');
+
 const UserSchema = new Schema(
   {
     uid: {
@@ -37,7 +38,7 @@ const UserSchema = new Schema(
     verifiedAt: {
       type: Date,
     },
-    evidence: {
+    evidence: new Schema({
       id: { type: String, required: true },
       type: {
         type: String,
@@ -55,30 +56,37 @@ const UserSchema = new Schema(
       status: {
         type: String,
         enum: ['pending', 'verified', 'rejected'],
+        default: 'pending',
       },
-      submittedAt: Date,
-      updatedAt: Date,
-    },
+      submittedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    }),
   },
   {
     timestamps: true,
   },
 );
-// UserSchema.pre('save', async function (next) {
-//   next();
-// });
 
-//
+UserSchema.pre('save', (next) => {
+  console.log('PRE SAVE UserSchema');
+  next();
+});
 UserSchema.pre('findOneAndUpdate', async function (next) {
   if (!this['_update']) return next();
 
-  if (
-    this['_update']['evidence'] &&
-    typeof this['_update']['evidence'] === 'object'
-  ) {
-    console.log(' - evidence', this['_update']);
-    this['_update'].evidence.updatedAt = Date.now();
-  }
+  // if (
+  //   this['_update']['evidence'] &&
+  //   typeof this['_update']['evidence'] === 'object'
+  // ) {
+  //   console.log(' - evidence', this['_update']);
+  //   this['_update'].evidence.updatedAt = Date.now();
+  // }
 
   if (
     typeof this['_update']['isVerified'] === 'boolean' &&

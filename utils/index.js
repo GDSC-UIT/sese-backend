@@ -22,9 +22,19 @@ const convertBooleanQuery = (object, ...fields) => {
 const objIsEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
+
+const convertNestedObjectQuery = (objectName, object) => {
+  const newObj = {};
+  Object.keys(object).forEach((k) => {
+    newObj[`${objectName}.${k}`] = object[k];
+  });
+
+  return newObj;
+};
 module.exports = {
   excludeFields,
   filterObject,
   objIsEmpty,
   convertBooleanQuery,
+  convertNestedObjectQuery,
 };
