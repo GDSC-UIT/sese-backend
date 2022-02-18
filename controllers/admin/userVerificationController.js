@@ -18,11 +18,41 @@ const getVerificationRequests = catchAsync(async (req, res, next) => {
   }
   convertBooleanQuery(reqQuery, 'isVerified');
 
-  console.log('verify: ', reqQuery);
   const users = await User.find(reqQuery);
   res.status(200).json({
     users,
   });
 });
 
-module.exports = { getVerificationRequests };
+//@desc         Update status of verification request of user
+//@route        PUT /api/admin/verification-requests/:evidenceId
+//@access       PRIVATE
+const updateVerificationRequest = catchAsync(async (req, res, next) => {
+  const { evidenceId } = req.params;
+  const { status } = req.body;
+
+  const updatedData = {
+    'evidence.status': status,
+    'evidence.updatedAt': Date.now(),
+  };
+
+  if (status === 'verified') {
+    updatedData.isVerified = true;
+  } else {
+    updatedData.isVerified = false;
+    updatedData.verifiedAt = null;
+  }
+
+  const updatedUser = await User.findOneAndUpdate(
+    {
+      'evidence._id': evidenceId,
+    },
+    updatedData,
+    { new: true, runValidators: true },
+  );
+
+  res.status(200).json({
+    user: updatedUser,
+  });
+});
+module.exports = { getVerificationRequests, updateVerificationRequest };

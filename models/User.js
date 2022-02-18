@@ -73,26 +73,13 @@ const UserSchema = new Schema(
   },
 );
 
-UserSchema.pre('save', (next) => {
-  console.log('PRE SAVE UserSchema');
-  next();
-});
 UserSchema.pre('findOneAndUpdate', async function (next) {
   if (!this['_update']) return next();
-
-  // if (
-  //   this['_update']['evidence'] &&
-  //   typeof this['_update']['evidence'] === 'object'
-  // ) {
-  //   console.log(' - evidence', this['_update']);
-  //   this['_update'].evidence.updatedAt = Date.now();
-  // }
 
   if (
     typeof this['_update']['isVerified'] === 'boolean' &&
     this['_update']['isVerified']
   ) {
-    console.log('Update');
     this['_update'].verifiedAt = Date.now();
   }
 

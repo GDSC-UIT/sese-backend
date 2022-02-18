@@ -2,7 +2,10 @@ const User = require('../../models/User');
 const AppError = require('../../utils/AppError');
 const catchAsync = require('../../utils/catchAsync');
 const jwt = require('jsonwebtoken');
-const { getVerificationRequests } = require('./userVerificationController');
+const {
+  getVerificationRequests,
+  updateVerificationRequest,
+} = require('./userVerificationController');
 
 //@desc         get user information
 //@route        GET /api/users
@@ -32,4 +35,9 @@ const login = catchAsync(async (req, res, next) => {
   });
 });
 
-module.exports = { getUsers, login, getVerificationRequests };
+module.exports = {
+  getUsers,
+  login,
+  getVerificationRequests,
+  updateVerificationRequest,
+};

@@ -48,7 +48,7 @@ exports.updateVerificationRequest = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findByIdAndUpdate(req.user._id, updateQuery, {
     new: true,
     runValidators: true,
-  });
+  }).lean();
   res.status(200).json({
     user: updatedUser,
   });
