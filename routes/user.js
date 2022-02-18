@@ -4,10 +4,10 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { protect } = require('../middlewares/auth');
 
-
-//Test
-router.get('/', userController.getUsers);
-
-router.put('/me', protect, userController.updateUser);
+router.use(protect);
+router
+  .route('/me/verification')
+  .put(userController.updateVerificationRequest);
+router.put('/me', userController.updateUser);
 
 module.exports = router;

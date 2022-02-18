@@ -56,7 +56,7 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     uid: req.body.uid,
-  });
+  }).lean();
   createSendToken(user, 200, res);
 });
 

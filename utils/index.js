@@ -5,5 +5,26 @@ const excludeFields = (object, ...excludedFields) => {
   });
   return newObj;
 };
+const filterObject = (object, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(object).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = object[el];
+  });
+  return newObj;
+};
 
-module.exports = { excludeFields };
+const convertBooleanQuery = (object, ...fields) => {
+  Object.keys(object).forEach((el) => {
+    if (fields.includes(el)) object[el] = object[el] === '1';
+  });
+};
+
+const objIsEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+};
+module.exports = {
+  excludeFields,
+  filterObject,
+  objIsEmpty,
+  convertBooleanQuery,
+};
