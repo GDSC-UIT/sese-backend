@@ -33,7 +33,7 @@ const login = catchAsync(async (req, res, next) => {
 
 	const user = await User.findOne({ email, role: 'admin' });
 	if (!user || password !== process.env.ADMIN_PASSWORD) {
-		return next(AppError('Email hoặc mật khẩu không hợp lệ', 404));
+		return next(new AppError('Email hoặc mật khẩu không hợp lệ', 404));
 	}
 
 	res.status(200).json({
