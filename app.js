@@ -7,6 +7,7 @@ const globalErrorHandler = require('./middlewares/globalErrorHandler');
 const AppError = require('./utils/AppError');
 const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
+const adminRoute = require('./routes/admin');
 //Config
 const app = express();
 app.use(
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
   res.send('HELLO STUREE');
 });
 app.use('/api/users', userRoute);
+app.use('/api/admin', adminRoute);
 app.use('/api/auth', authRoute);
 
 app.all('*', (req, res, next) => {

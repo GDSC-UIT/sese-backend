@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { validateEmail } = require('../utils/validate');
+const AppError = require('../utils/AppError');
 
 const UserSchema = new Schema(
   {
@@ -14,20 +15,74 @@ const UserSchema = new Schema(
     email: {
       type: String,
       required: true,
-      validate: [validateEmail, 'Please fill a valid email address'],
+      validate: [validateEmail, 'Vui lòng nhập email hợp lệ'],
     },
     name: {
       type: String,
-      required: [true, 'Please enter a name'],
+      required: [true, 'Vui lòng nhập tên'],
       maxlength: 30,
     },
     avatar: {
       type: String,
+      required: [true, 'Vui lòng upload ảnh'],
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verifiedAt: {
+      type: Date,
+    },
+    evidence: new Schema({
+      id: { type: String, required: true },
+      type: {
+        type: String,
+        enum: ['student_card', 'identity_card', 'citizen_identity_card'],
+        required: [true, 'Vui lòng cung cấp loại bằng chứng xác minh'],
+      },
+      frontImg: {
+        type: String,
+        required: [true, 'Vui lòng upload mặt trước'],
+      },
+      backImg: {
+        type: String,
+        required: [true, 'Vui lòng upload mặt sau'],
+      },
+      status: {
+        type: String,
+        enum: ['pending', 'verified', 'rejected'],
+        default: 'pending',
+      },
+      submittedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    }),
   },
   {
     timestamps: true,
   },
 );
 
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  if (!this['_update']) return next();
+
+  if (
+    typeof this['_update']['isVerified'] === 'boolean' &&
+    this['_update']['isVerified']
+  ) {
+    this['_update'].verifiedAt = Date.now();
+  }
+
+  next();
+});
 module.exports = mongoose.model('User', UserSchema);
