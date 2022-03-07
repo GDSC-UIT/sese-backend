@@ -8,9 +8,17 @@ const jwt = require('jsonwebtoken');
 //@access       PRIVATE
 const getUsers = catchAsync(async (req, res, next) => {
   const users = await User.find({}).lean();
-  res.status(200).json({
-    users,
-  });
+  res.status(200).json({ users });
+});
+
+//@desc         get user information
+//@route        GET /api/users
+//@access       PRIVATE
+const getUser = catchAsync(async (req, res, next) => {
+  const { _id } = req.params;
+
+  const user = await User.findById({ _id });
+  res.status(200).json(user);
 });
 
 //@desc         get user information
@@ -33,6 +41,7 @@ const login = catchAsync(async (req, res, next) => {
 
 module.exports = {
   getUsers,
+  getUser,
   login,
   userVerificationController: require('./userVerificationController'),
   categoryController: require('./categoryController'),
