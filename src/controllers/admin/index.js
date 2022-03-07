@@ -2,10 +2,6 @@ const User = require('../../models/User');
 const AppError = require('../../utils/AppError');
 const catchAsync = require('../../utils/catchAsync');
 const jwt = require('jsonwebtoken');
-const {
-  getVerificationRequests,
-  updateVerificationRequest,
-} = require('./userVerificationController');
 
 //@desc         get user information
 //@route        GET /api/users
@@ -25,7 +21,7 @@ const login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email, role: 'admin' });
   if (!user || password !== process.env.ADMIN_PASSWORD) {
-    return next(AppError('Email hoặc mật khẩu không hợp lệ', 404));
+    return next(new AppError('Email hoặc mật khẩu không hợp lệ', 404));
   }
 
   res.status(200).json({
@@ -38,6 +34,7 @@ const login = catchAsync(async (req, res, next) => {
 module.exports = {
   getUsers,
   login,
-  getVerificationRequests,
-  updateVerificationRequest,
+  userVerificationController: require('./userVerificationController'),
+  categoryController: require('./categoryController'),
+  subcategoryController: require('./subcategoryController'),
 };

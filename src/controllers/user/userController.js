@@ -1,11 +1,11 @@
-const catchAsync = require('../utils/catchAsync');
-const User = require('../models/User');
+const catchAsync = require('../../utils/catchAsync');
+const User = require('../../models/User');
 const {
   filterObject,
   objIsEmpty,
   convertNestedObjectQuery,
-} = require('../utils');
-const AppError = require('../utils/AppError');
+} = require('../../utils');
+const AppError = require('../../utils/AppError');
 
 //@desc         update user information
 //@route        PUT /api/users/me
