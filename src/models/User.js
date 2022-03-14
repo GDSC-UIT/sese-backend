@@ -24,8 +24,16 @@ const UserSchema = new Schema(
     },
     avatar: {
       type: String,
-      required: [true, 'Vui lòng upload ảnh'],
     },
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+    },
+    birthDate: Date,
+    phoneNumber: Number,
+    major: String,
+    university: String,
+    liveAt: String,
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -72,6 +80,13 @@ const UserSchema = new Schema(
     timestamps: true,
   },
 );
+
+// UserSchema.virtual('numPostedProducts', {
+//   ref: 'Product', // The model to use
+//   localField: '_id', // Find people where `localField`
+//   foreignField: 'user', // is equal to `foreignField`
+//   count: true, // And only get the number of docs
+// });
 
 UserSchema.pre('findOneAndUpdate', async function (next) {
   if (!this['_update']) return next();

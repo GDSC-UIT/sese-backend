@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/User');
-const AppError = require('../utils/AppError');
-const catchAsync = require('../utils/catchAsync');
-const { firebaseAuth } = require('../config/firebase');
+const User = require('../../models/User');
+const AppError = require('../../utils/AppError');
+const catchAsync = require('../../utils/catchAsync');
+const { firebaseAuth } = require('../../config/firebase');
 
 //@desc         Check user is logged in
 //@route        GET /api/auth
