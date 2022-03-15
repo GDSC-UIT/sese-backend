@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { validateEmail } = require('../utils/validate');
-const AppError = require('../utils/AppError');
+const { validateEmail } = require("../utils/validate");
+const AppError = require("../utils/AppError");
 
 const UserSchema = new Schema(
   {
@@ -15,11 +15,11 @@ const UserSchema = new Schema(
     email: {
       type: String,
       required: true,
-      validate: [validateEmail, 'Vui lòng nhập email hợp lệ'],
+      validate: [validateEmail, "Vui lòng nhập email hợp lệ"],
     },
     name: {
       type: String,
-      required: [true, 'Vui lòng nhập tên'],
+      required: [true, "Vui lòng nhập tên"],
       maxlength: 30,
     },
     avatar: {
@@ -27,17 +27,22 @@ const UserSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'female'],
+      enum: ["male", "female"],
     },
     birthDate: Date,
-    phoneNumber: Number,
-    major: String,
+    phoneNumber: String,
     university: String,
     liveAt: String,
+    interestedCategories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     role: {
       type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
+      enum: ["user", "admin"],
+      default: "user",
     },
     isVerified: {
       type: Boolean,
@@ -50,21 +55,21 @@ const UserSchema = new Schema(
       id: { type: String, required: true },
       type: {
         type: String,
-        enum: ['student_card', 'identity_card', 'citizen_identity_card'],
-        required: [true, 'Vui lòng cung cấp loại bằng chứng xác minh'],
+        enum: ["student_card", "identity_card", "citizen_identity_card"],
+        required: [true, "Vui lòng cung cấp loại bằng chứng xác minh"],
       },
       frontImg: {
         type: String,
-        required: [true, 'Vui lòng upload mặt trước'],
+        required: [true, "Vui lòng upload mặt trước"],
       },
       backImg: {
         type: String,
-        required: [true, 'Vui lòng upload mặt sau'],
+        required: [true, "Vui lòng upload mặt sau"],
       },
       status: {
         type: String,
-        enum: ['pending', 'verified', 'rejected'],
-        default: 'pending',
+        enum: ["pending", "verified", "rejected"],
+        default: "pending",
       },
       submittedAt: {
         type: Date,
@@ -78,7 +83,7 @@ const UserSchema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 // UserSchema.virtual('numPostedProducts', {
@@ -88,16 +93,16 @@ const UserSchema = new Schema(
 //   count: true, // And only get the number of docs
 // });
 
-UserSchema.pre('findOneAndUpdate', async function (next) {
-  if (!this['_update']) return next();
+UserSchema.pre("findOneAndUpdate", async function (next) {
+  if (!this["_update"]) return next();
 
   if (
-    typeof this['_update']['isVerified'] === 'boolean' &&
-    this['_update']['isVerified']
+    typeof this["_update"]["isVerified"] === "boolean" &&
+    this["_update"]["isVerified"]
   ) {
-    this['_update'].verifiedAt = Date.now();
+    this["_update"].verifiedAt = Date.now();
   }
 
   next();
 });
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);

@@ -1,17 +1,24 @@
-const catchAsync = require('../../utils/catchAsync');
-const User = require('../../models/User');
+const catchAsync = require("../../utils/catchAsync");
+const User = require("../../models/User");
 const {
   filterObject,
   objIsEmpty,
   convertNestedObjectQuery,
-} = require('../../utils');
-const AppError = require('../../utils/AppError');
+  excludeFields,
+} = require("../../utils");
+const AppError = require("../../utils/AppError");
 
 //@desc         update user information
 //@route        PUT /api/users/me
 //@access       PRIVATE
 exports.updateUser = catchAsync(async (req, res, next) => {
-  const filteredObj = filterObject(req.body, 'name', 'avatar');
+  const filteredObj = excludeFields(
+    req.body,
+    "uid",
+    "signInProvider",
+    "email",
+    "role"
+  );
 
   const user = await User.findByIdAndUpdate(req.user._id, filteredObj, {
     new: true,
@@ -26,10 +33,10 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 //@route        PUT /api/users/me/verification
 //@access       PRIVATE
 exports.updateVerificationRequest = catchAsync(async (req, res, next) => {
-  const { evidence } = filterObject(req.body, 'evidence');
+  const { evidence } = filterObject(req.body, "evidence");
 
   if (!evidence || objIsEmpty(evidence)) {
-    return next(new AppError('Vui lòng nhập thông tin', 400));
+    return next(new AppError("Vui lòng nhập thông tin", 400));
   }
   const user = await User.findById(req.user._id);
 
@@ -44,7 +51,7 @@ exports.updateVerificationRequest = catchAsync(async (req, res, next) => {
 
   //Update
   evidence.updatedAt = Date.now();
-  const updateQuery = convertNestedObjectQuery('evidence', evidence);
+  const updateQuery = convertNestedObjectQuery("evidence", evidence);
   const updatedUser = await User.findByIdAndUpdate(req.user._id, updateQuery, {
     new: true,
     runValidators: true,
