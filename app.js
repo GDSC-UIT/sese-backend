@@ -10,6 +10,7 @@ const {
   userRoute,
   postRoute,
   categoryRoute,
+  conversationRoute,
 } = require("./src/routes/user");
 const adminRoute = require("./src/routes/admin");
 //Config
@@ -34,6 +35,7 @@ app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/categories", categoryRoute);
+app.use("/api/conversations", conversationRoute);
 
 app.all("*", (req, res, next) => {
   const error = new AppError(
