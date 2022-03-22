@@ -52,7 +52,6 @@ const UserSchema = new Schema(
       type: Date,
     },
     evidence: new Schema({
-      id: { type: String, required: true },
       type: {
         type: String,
         enum: ["student_card", "identity_card", "citizen_identity_card"],
