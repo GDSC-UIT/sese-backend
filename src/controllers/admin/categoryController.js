@@ -1,22 +1,22 @@
-const { convertBooleanQuery } = require('../../utils');
-const AppError = require('../../utils/AppError');
-const catchAsync = require('../../utils/catchAsync');
-const Category = require('../../models/Category');
-const Subcategory = require('../../models/Subcategory');
-const mongoose = require('mongoose');
+const { convertBooleanQuery } = require("../../utils");
+const AppError = require("../../utils/AppError");
+const catchAsync = require("../../utils/catchAsync");
+const Category = require("../../models/Category");
+const Subcategory = require("../../models/Subcategory");
+const mongoose = require("mongoose");
 //@desc         get all category
-//@route        GET /api/admin/categories (or 0)
+//@route        GET /api/admin/categories
 //@access       PRIVATE
 const getAllCategories = catchAsync(async (req, res, next) => {
-  const categories = await Category.find({}).populate('subcategories').lean();
+  const categories = await Category.find({}).populate("subcategories").lean();
   res.status(200).json({
-    message: 'Get all categories',
+    message: "Get all categories",
     categories,
   });
 });
 
-//@desc         Create new category
-//@route        POST /api/admin/categories (or 0)
+//@desc         Create new category (NOT USED)
+//@route        POST /api/admin/categories
 //@access       PRIVATE
 const createCategory = catchAsync(async (req, res, next) => {
   const { category, subcategories } = req.body;
@@ -34,12 +34,6 @@ const createCategory = catchAsync(async (req, res, next) => {
       };
     }),
   }));
-  // const params = subcategories.params.map((p) => ({
-  //   ...p,
-  //   param,
-  //   _id: param,
-  //   options: p.options,
-  // }));
   const session = await mongoose.startSession();
   const _id = new mongoose.Types.ObjectId();
   await session.withTransaction(async () => {
@@ -53,12 +47,12 @@ const createCategory = catchAsync(async (req, res, next) => {
 
     console.log(transformedSubcategories);
     await Subcategory.create(transformedSubcategories, { session: session });
-    console.log('Subcategory created!');
+    console.log("Subcategory created!");
   });
   session.endSession();
-  const newCategory = await Category.findById(_id).populate('subcategories');
+  const newCategory = await Category.findById(_id).populate("subcategories");
   res.status(200).json({
-    message: 'Success',
+    message: "Success",
     category: newCategory,
   });
 });
@@ -67,18 +61,15 @@ const createCategory = catchAsync(async (req, res, next) => {
 //@route        POST /api/admin/categories/:id
 //@access       PRIVATE
 const updateCategory = catchAsync(async (req, res, next) => {
-  const { name, icon } = req.body;
-
   const newCategory = await Category.findByIdAndUpdate(
     req.params.id,
     {
-      name,
-      icon,
+      ...req.body,
     },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   );
   res.status(200).json({
-    message: 'Success',
+    message: "Success",
     category: newCategory,
   });
 });
@@ -89,11 +80,11 @@ const updateCategory = catchAsync(async (req, res, next) => {
 const batchDeleteCategories = catchAsync(async (req, res, next) => {
   const { categories } = req.body;
   if (!categories || !Array.isArray(categories)) {
-    return next(new AppError('Invalid data'));
+    return next(new AppError("Invalid data"));
   }
   const result = await Category.deleteMany({ _id: { $in: categories } });
   res.status(200).json({
-    message: 'delete successfully!',
+    message: "delete successfully!",
     result,
   });
 });
@@ -103,11 +94,11 @@ const batchDeleteCategories = catchAsync(async (req, res, next) => {
 const batchCreateCategories = catchAsync(async (req, res, next) => {
   const { categories } = req.body;
   if (!categories || !Array.isArray(categories)) {
-    return next(new AppError('Invalid data'));
+    return next(new AppError("Invalid data"));
   }
   const result = await Category.create(categories);
   res.status(200).json({
-    message: 'create successfully!',
+    message: "create successfully!",
     categories: result,
   });
 });
