@@ -19,7 +19,7 @@ const getAllCategories = catchAsync(async (req, res, next) => {
 //@route        POST /api/admin/categories
 //@access       PRIVATE
 const createCategory = catchAsync(async (req, res, next) => {
-  const { category, subcategories } = req.body;
+  const { name, icon, image, subcategories } = req.body;
 
   const transformedSubcategories = subcategories.map((sub) => ({
     ...sub,
@@ -37,7 +37,7 @@ const createCategory = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
   const _id = new mongoose.Types.ObjectId();
   await session.withTransaction(async () => {
-    await Category.create([{ _id, ...category }], {
+    await Category.create([{ _id, name, icon, image }], {
       session: session,
     });
 
