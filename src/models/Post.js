@@ -31,6 +31,14 @@ const PostSchema = new Schema(
       type: String,
       required: [true, "Vui lòng nhập vị trí giao hàng"],
     },
+    soldOut: {
+      type: Boolean,
+      default: false,
+    },
+    buyer: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",

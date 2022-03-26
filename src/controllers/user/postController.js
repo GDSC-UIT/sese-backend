@@ -8,6 +8,7 @@ const {
 } = require("../../utils");
 const AppError = require("../../utils/AppError");
 const { options } = require("../../routes/admin");
+const User = require("../../models/User");
 
 //@desc         get all post
 //@route        PUT /api/posts
@@ -33,7 +34,10 @@ const getAllPosts = catchAsync(async (req, res, next) => {
 //@route        PUT /api/posts
 //@access       PRIVATE
 const getPostDetails = catchAsync(async (req, res, next) => {
-  const post = await Post.findById(req.params.id).lean();
+  const post = await Post.findById(req.params.id)
+    .populate("user")
+    .populate("buyer", "name email avatar")
+    .lean();
   if (!post) {
     return next(new AppError("Không tồn tại bài đăng này", 404));
   }
@@ -103,8 +107,40 @@ const createPost = catchAsync(async (req, res, next) => {
     user: req.user._id,
   });
   res.status(200).json({
-    message: "create success",
+    message: "create post successfully",
     post,
+  });
+});
+
+//@desc         update new post
+//@route        PUT /api/posts/:id
+//@access       PRIVATE
+const updatePost = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const post = await Post.findById(id);
+  if (!post) {
+    return next(new AppError("Không tồn tại bài đăng này", 404));
+  }
+  if (post.user.toString() !== req.user._id.toString()) {
+    return next(new AppError("Không có quyền sửa bài đăng này", 403));
+  }
+
+  if (req.body.buyer) {
+    const buyer = await User.findById(req.body.buyer);
+    if (!buyer) {
+      return next(new AppError("Không tồn tại người này", 404));
+    }
+
+    req.body.soldOut = true;
+  }
+  const updatedPost = await Post.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({
+    message: "update post successfully",
+    post: updatedPost,
   });
 });
 
@@ -112,4 +148,5 @@ module.exports = {
   createPost,
   getAllPosts,
   getPostDetails,
+  updatePost,
 };
