@@ -12,9 +12,9 @@ const PostSchema = new Schema(
       type: Number,
       required: [true, "Vui lòng nhập giá sản phẩm"],
     },
-    condition: {
-      type: String,
-      required: [true, "Vui lòng nhập tình trạng sản phẩm"],
+    negotiable: {
+      type: Boolean,
+      default: true,
     },
     note: {
       type: String,
@@ -46,7 +46,7 @@ const PostSchema = new Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "SubCategory",
+      ref: "Subcategory",
       required: true,
     },
     categoryParams: Object,
