@@ -55,11 +55,5 @@ const PostSchema = new Schema(
     timestamps: true,
   }
 );
-PostSchema.statics.search = function (field, keyword) {
-  console.log("Searching");
-  return this.find({
-    [field]: new RegExp(keyword, "gi"),
-  });
-};
 
 module.exports = mongoose.model("Post", PostSchema);

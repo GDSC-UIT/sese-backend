@@ -22,7 +22,7 @@ const getAllPosts = catchAsync(async (req, res, next) => {
     });
   }
 
-  const posts = await postQuery;
+  const posts = await postQuery.populate("user");
 
   res.status(200).json({
     message: "get all posts",
