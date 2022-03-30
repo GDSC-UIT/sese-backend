@@ -10,20 +10,43 @@ const AppError = require("../../utils/AppError");
 const { options } = require("../../routes/admin");
 const User = require("../../models/User");
 
+function getRandom(arr, n) {
+  let result = new Array(n),
+    len = arr.length,
+    taken = new Array(len);
+  if (n > len)
+    throw new RangeError("getRandom: more elements taken than available");
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+}
 //@desc         get all post
 //@route        PUT /api/posts
 //@access       PRIVATE
 const getAllPosts = catchAsync(async (req, res, next) => {
-  const { q } = req.query;
-  const postQuery = Post.find({});
+  const { q, type, ...query } = req.query;
+  const postQuery = Post.find(query);
   if (q) {
     postQuery.find({
       name: new RegExp(q, "gi"),
     });
   }
+  if (type === "new") {
+    postQuery.sort("-createdAt");
+  }
+  let posts = await postQuery.populate("user");
 
-  const posts = await postQuery.populate("user");
-
+  if (type === "recommendation") {
+    const count = await Post.countDocuments();
+    console.log("Count: ", count);
+    if (count > 5) {
+      posts = getRandom(posts, 5);
+      console.log("Random post: ", posts);
+    }
+  }
   res.status(200).json({
     message: "get all posts",
     posts,
