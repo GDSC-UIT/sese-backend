@@ -27,7 +27,7 @@ function getRandom(arr, n) {
 //@route        PUT /api/posts
 //@access       PRIVATE
 const getAllPosts = catchAsync(async (req, res, next) => {
-  const { q, type, ...query } = req.query;
+  const { q, type, missing, ...query } = req.query;
   const postQuery = Post.find(query);
   if (q) {
     postQuery.find({
@@ -37,6 +37,7 @@ const getAllPosts = catchAsync(async (req, res, next) => {
   if (type === "new") {
     postQuery.sort("-createdAt");
   }
+
   let posts = await postQuery.populate("user");
 
   if (type === "recommendation") {

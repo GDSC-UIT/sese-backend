@@ -9,9 +9,11 @@ const mongoose = require("mongoose");
 //@access       PRIVATE
 const getAllCategories = catchAsync(async (req, res, next) => {
   const categories = await Category.find({}).populate("subcategories").lean();
+  const categoriesArr = categories.map((c) => c._id);
   res.status(200).json({
     message: "Get all categories",
     categories,
+    categoriesArr,
   });
 });
 

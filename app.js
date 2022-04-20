@@ -6,12 +6,12 @@ const morgan = require("morgan");
 const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 const AppError = require("./src/utils/AppError");
 const {
-  authRoute,
   userRoute,
   postRoute,
   categoryRoute,
   conversationRoute,
 } = require("./src/routes/user");
+const authRoute = require("./src/routes/auth");
 const adminRoute = require("./src/routes/admin");
 //Config
 const app = express();

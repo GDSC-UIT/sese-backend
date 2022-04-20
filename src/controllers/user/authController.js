@@ -1,15 +1,15 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const User = require('../../models/User');
-const AppError = require('../../utils/AppError');
-const catchAsync = require('../../utils/catchAsync');
-const { firebaseAuth } = require('../../config/firebase');
+const User = require("../../models/User");
+const AppError = require("../../utils/AppError");
+const catchAsync = require("../../utils/catchAsync");
+const { firebaseAuth } = require("../../config/firebase");
 
 //@desc         Check user is logged in
 //@route        GET /api/auth
 //@access       PRIVATE
 exports.authenticate = (req, res) => {
-  res.status(200).json({ user: req.user });
+  res.status(200).json({ data: req.user });
 };
 
 //@desc         User login through social account like FB, Google
@@ -18,11 +18,11 @@ exports.authenticate = (req, res) => {
 exports.socialLogin = catchAsync(async (req, res, next) => {
   const { idToken } = req.body;
   if (!idToken) {
-    return next(new AppError('Not authorized!', 401));
+    return next(new AppError("Not authorized!", 401));
   }
   const decodedToken = await firebaseAuth.verifyIdToken(req.body.idToken);
   if (!decodedToken) {
-    return next(new AppError('Not authorized!', 401));
+    return next(new AppError("Not authorized!", 401));
   }
 
   const user = await User.findOne({
@@ -46,7 +46,7 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
       isNew: true,
     },
     201,
-    res,
+    res
   );
 });
 
