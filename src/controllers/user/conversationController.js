@@ -9,9 +9,12 @@ const User = require("../../models/User");
 //@route        GET /api/conversations
 //@access       PRIVATE
 const getUserConversation = catchAsync(async (req, res, next) => {
+  console.log("Req user: ", req.user.id);
   const conversations = await Conversation.find({
-    members: req.user.id,
-  }).lean();
+    members: req.user._id,
+  })
+    .populate("members")
+    .lean();
   res.status(200).json({
     message: "get user conversation successfully",
     data: conversations,
