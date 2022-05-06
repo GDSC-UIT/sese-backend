@@ -1,13 +1,7 @@
 const catchAsync = require("../../utils/catchAsync");
 const Post = require("../../models/Post");
 const Subcategory = require("../../models/Subcategory");
-const {
-  filterObject,
-  objIsEmpty,
-  convertNestedObjectQuery,
-} = require("../../utils");
 const AppError = require("../../utils/AppError");
-const { options } = require("../../routes/admin");
 const User = require("../../models/User");
 
 function getRandom(arr, n) {
@@ -23,11 +17,13 @@ function getRandom(arr, n) {
   }
   return result;
 }
+
 //@desc         get all post
 //@route        PUT /api/posts
 //@access       PRIVATE
 const getAllPosts = catchAsync(async (req, res, next) => {
-  const { q, type, missing, ...query } = req.query;
+  const { q, type, ...query } = req.query;
+
   const postQuery = Post.find(query);
   if (q) {
     postQuery.find({
@@ -42,10 +38,8 @@ const getAllPosts = catchAsync(async (req, res, next) => {
 
   if (type === "recommendation") {
     const count = await Post.countDocuments();
-    console.log("Count: ", count);
     if (count > 5) {
       posts = getRandom(posts, 5);
-      console.log("Random post: ", posts);
     }
   }
   res.status(200).json({
@@ -65,24 +59,29 @@ const getPostDetails = catchAsync(async (req, res, next) => {
   if (!post) {
     return next(new AppError("Không tồn tại bài đăng này", 404));
   }
-  console.log(post);
-  const params = Object.keys(post.categoryParams);
-  const subcategory = await Subcategory.findById(post.category);
+  if (post.categoryParams) {
+    const params = Object.keys(post.categoryParams);
+    const subcategory = await Subcategory.findById(post.subcategory);
 
-  console.log("subcategory: ", subcategory);
-  if (subcategory) {
-    const categoryInfo = [];
-    params.forEach((p) => {
-      const info = getSingleCategoryDetails(
-        subcategory.params,
-        p,
-        post.categoryParams[p]
-      );
-      if (info) categoryInfo.push(info);
-    });
+    console.log("subcategory: ", subcategory);
+    if (subcategory) {
+      const categoryInfo = [];
+      params.forEach((p) => {
+        const info = getSingleCategoryDetails(
+          subcategory.params,
+          p,
+          post.categoryParams[p]
+        );
+        if (info) categoryInfo.push(info);
+      });
 
-    post.categoryInfos = categoryInfo;
+      post.categoryInfos = categoryInfo;
+    }
+  } else {
+    post.categoryParams = {};
+    post.categoryInfos = [];
   }
+
   res.status(200).json({
     message: "get post details",
     post,
@@ -126,8 +125,18 @@ const getSingleCategoryDetails = (params, param, idOption) => {
 //@route        POST /api/posts/
 //@access       PRIVATE
 const createPost = catchAsync(async (req, res, next) => {
+  const { category } = req.body;
+
+  const sub = await Subcategory.findById(category);
+
+  if (!sub) {
+    return next(new AppError("Không tồn tại category này", 404));
+  }
+
   const post = await Post.create({
     ...req.body,
+    category: sub.category,
+    subcategory: sub._id,
     user: req.user._id,
   });
   res.status(200).json({

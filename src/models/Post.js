@@ -46,10 +46,15 @@ const PostSchema = new Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    subcategory: {
+      type: Schema.Types.ObjectId,
       ref: "Subcategory",
       required: true,
     },
-    categoryParams: Object,
+    categoryParams: { type: Object, default: {} },
   },
   {
     timestamps: true,
