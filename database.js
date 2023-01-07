@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
@@ -6,9 +6,33 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('Database connected successfully !');
+    console.log("Database connected successfully !");
   } catch (error) {
-    console.log('Database Connection: ', error.message);
+    console.log("Database Connection: ", error.message);
+    process.exit(1);
+  }
+};
+const connectDB2 = async () => {
+  try {
+    await mongoose.connect(process.env.DATABASE, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Database connected successfully !");
+  } catch (error) {
+    console.log("Database Connection: ", error.message);
+    process.exit(1);
+  }
+};
+const connectDB3 = async () => {
+  try {
+    await mongoose.connect(process.env.DATABASE, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Database connected successfully !");
+  } catch (error) {
+    console.log("Database Connection: ", error.message);
     process.exit(1);
   }
 };
